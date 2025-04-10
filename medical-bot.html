@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat with MediBot 💬</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f8ff;
+      color: #003366;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+      text-align: center;
+      width: 320px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #005b99;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #b3d1ff;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #005fa3;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .back-button {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    .back-button a {
+      color: white;
+      background-color: #007acc;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      transition: background 0.3s;
+    }
+
+    .back-button a:hover {
+      background-color: #005fa3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🤖 Chat with MediBot</h2>
+    
+    <select id="symptomSelect">
+      <option value="">🔽 -- Select Symptom --</option>
+      <option value="headache">🤕 Headache</option>
+      <option value="vomiting">🤢 Vomiting</option>
+      <option value="shivering">🥶 Shivering</option>
+      <option value="cough">🤧 Cough</option>
+      <option value="cold">🤒 Cold</option>
+      <option value="fast heart beat">❤‍🔥 Fast Heart Beat</option>
+      <option value="breathing problem">😮‍💨 Breathing Problem</option>
+      <option value="dizziness">😵‍💫 Dizziness</option>
+      <option value="fever">🌡 Fever</option>
+      <option value="diarrhea">💩 Diarrhea</option>
+      <option value="chest pain">❤ Chest Pain</option>
+      <option value="back pain">🪑 Back Pain</option>
+      <option value="stomach pain">🤢 Stomach Pain</option>
+      <option value="sore throat">🗣 Sore Throat</option>
+      <option value="rash">🌺 Rash</option>
+      <option value="eye pain">👁 Eye Pain</option>
+      <option value="ear pain">👂 Ear Pain</option>
+    </select>
+
+    <input type="text" id="symptomInput" placeholder="✍ Or type your symptom..." />
+
+    <button onclick="checkSymptom()">🔍 Get Cause</button>
+    
+    <p id="result"></p>
+  </div>
+
+  <div class="back-button">
+    <a href="index.html">← Back to Home</a>
+  </div>
+
+  <script>
+    const info = {
+      "headache": {
+        cause: "Stress, migraine, or dehydration.",
+        tip: "💡 Try resting in a dark room, stay hydrated, and avoid screen time."
+      },
+      "vomiting": {
+        cause: "Food poisoning, gastritis, or infection.",
+        tip: "💧 Drink ORS, avoid solid food for a while, and rest."
+      },
+      "shivering": {
+        cause: "Fever, cold environment, or flu.",
+        tip: "🧣 Keep yourself warm, drink warm fluids, and take paracetamol if needed."
+      },
+      "cough": {
+        cause: "Throat infection, cold, or allergy.",
+        tip: "🍯 Gargle with salt water and drink warm water with honey."
+      },
+      "cold": {
+        cause: "Common cold, viral infection.",
+        tip: "🥣 Take rest, drink hot soups, and use steam inhalation."
+      },
+      "fast heart beat": {
+        cause: "Anxiety, overexertion, or panic.",
+        tip: "🧘‍♂ Sit down, take deep breaths, and try to relax your body."
+      },
+      "breathing problem": {
+        cause: "Asthma, lung infection, or anxiety.",
+        tip: "🫁 Use an inhaler if prescribed, stay calm, and seek medical help if severe."
+      },
+      "dizziness": {
+        cause: "Low blood pressure, dehydration, or vertigo.",
+        tip: "🛌 Lie down, drink water or a sugary drink, and avoid sudden movements."
+      },
+      "fever": {
+        cause: "Infection, flu, or inflammatory illness.",
+        tip: "🌡 Take paracetamol, stay hydrated, and rest well."
+      },
+      "diarrhea": {
+         cause: "Food poisoning, viral infection, or stomach bug.",
+          tip: "🚰 Drink plenty of fluids, avoid dairy and spicy foods, and use ORS."
+      },
+      "chest pain": {
+         cause: "Heart issues, acidity, or anxiety.",
+         tip: "❤ Take rest, avoid exertion, and seek emergency help if severe."
+      },
+      "back pain": {
+          cause: "Poor posture, muscle strain, or kidney issue.",
+          tip: "🛌 Rest, apply heat or cold packs, and maintain good posture."
+      },
+     "stomach pain": {
+          cause: "Indigestion, gastritis, or infection.",
+          tip: "🥛 Eat light, avoid spicy foods, and use antacids if needed."
+      },
+      "sore throat": {
+           cause: "Viral infection, allergies, or overuse of voice.",
+           tip: "🧂 Gargle with warm salt water and drink herbal teas."
+      },
+       "rash": {
+            cause: "Allergy, skin irritation, or infection.",
+            tip: "🧴 Apply soothing lotion or cream, avoid scratching, and stay clean."
+      },
+       "eye pain": {
+            cause: "Eye strain, infection, or injury.",
+            tip: "👁 Rest your eyes, use lubricating drops, and avoid screen exposure."
+      },
+      "ear pain": {
+           cause: "Ear infection, fluid buildup, or cold.",
+           tip: "👂 Use warm compress, avoid inserting objects, and consult a doctor if needed."
+      }
+    };
+  
+    function checkSymptom() {
+      let selected = document.getElementById("symptomSelect").value.toLowerCase();
+      let typed = document.getElementById("symptomInput").value.toLowerCase();
+      let symptom = selected || typed;
+      const resultBox = document.getElementById("result");
+  
+      if (info[symptom]) {
+        resultBox.innerHTML = `
+          <strong>🩺 Cause:</strong> ${info[symptom].cause}<br>
+          <strong>🛟 Tip:</strong> ${info[symptom].tip}
+        `;
+        resultBox.style.color = "#006400";
+        alert("⚠ Please consult a doctor for proper treatment.");
+      } else {
+        resultBox.innerText = "❌ Symptom is unusual, consult with doctor.";
+        resultBox.style.color = "red";
+      }
+    }
+  </script>
+</body>
+</html>

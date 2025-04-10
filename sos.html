@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Medical SOS with Location</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5fbff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    .sos-container {
+      background-color: #e6f2ff;
+      border: 3px solid #3399ff;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      width: 95%;
+      max-width: 500px;
+      box-shadow: 0 0 15px rgba(0, 102, 204, 0.2);
+    }
+
+    h2 {
+      color: #0059b3;
+      margin-bottom: 10px;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: 8px;
+      border: 1px solid #3399ff;
+    }
+
+    .sos-btn, .add-btn {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      font-size: 1.05rem;
+      background-color: #3399ff;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .sos-btn:hover, .add-btn:hover {
+      background-color: #007acc;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 15px 0;
+      text-align: left;
+    }
+
+    li {
+      background-color: #f0f8ff;
+      border: 1px solid #cce0ff;
+      padding: 8px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    .note {
+      margin-top: 10px;
+      color: #555;
+      font-size: 0.9rem;
+    }
+
+    .back-button {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    .back-button a {
+      color: #007acc;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      border: 2px solid #007acc;
+      border-radius: 10px;
+      transition: background 0.3s;
+    }
+
+    .back-button a:hover {
+      background-color: #007acc;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="sos-container">
+    <h2>Medical Emergency SOS</h2>
+    <input type="text" id="name" placeholder="Family Member Name" />
+    <input type="tel" id="phone" placeholder="Phone Number (e.g. 91XXXXXXXXXX)" />
+    <button class="add-btn" onclick="addMember()">Add Member</button>
+
+    <ul id="memberList"></ul>
+    <button class="sos-btn" onclick="sendWhatsAppSOS()">Send WhatsApp SOS</button>
+
+    <p class="note">Ensure numbers include country code (e.g., 91)</p>
+  </div>
+
+  <div class="back-button">
+    <a href="index.html">← Back to Home</a>
+  </div>
+
+  <script>
+    const members = [];
+
+    function addMember() {
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+
+      if (name === "" || phone === "") {
+        alert("Please enter both name and phone number.");
+        return;
+      }
+
+      members.push({ name, phone });
+
+      const list = document.getElementById("memberList");
+      const li = document.createElement("li");
+      li.textContent = `${name} - ${phone}`;
+      list.appendChild(li);
+
+      document.getElementById("name").value = "";
+      document.getElementById("phone").value = "";
+    }
+
+    function sendWhatsAppSOS() {
+      if (members.length === 0) {
+        alert("No members added yet.");
+        return;
+      }
+
+      if (!navigator.geolocation) {
+        alert("Geolocation not supported by this browser.");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const locationLink = `https://www.google.com/maps?q=${lat},${lon}`;
+          const msg = `🚨 Emergency Alert!\nI need medical assistance urgently.\nMy current location: ${locationLink}`;
+
+          members.forEach(member => {
+            const num = member.phone.replace(/\D/g, '');
+            const link = `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+            window.open(link, '_blank');
+          });
+        },
+        (error) => {
+          alert("Unable to get location. Please allow location access.");
+        }
+      );
+    }
+  </script>
+</body>
+</html>

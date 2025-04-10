@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MedTime+ - Self-Care Goals</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #d0e7ff, #f0faff);
+      color: #003366;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    .self-care {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0, 102, 204, 0.3);
+      padding: 2rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      color: #005a9c;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 70%;
+      border: 1px solid #0099cc;
+      border-radius: 10px;
+      margin: 10px 0;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #007acc;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #005fa3;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #e6f7ff;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      background-color: #ccf5cc;
+    }
+
+    .task-buttons button {
+      margin-left: 10px;
+      font-size: 1rem;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #007acc;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #005fa3;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      z-index: 999;
+    }
+
+    .notification.show {
+      opacity: 1;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .exit-btn {
+      margin-top: auto;
+      padding: 12px 20px;
+      background-color: #ff4d4d;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .exit-btn:hover {
+      background-color: #cc0000;
+    }
+    .back-button a {
+      color: #007acc;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      border: 2px solid #007acc;
+      border-radius: 10px;
+      transition: background 0.3s;
+    }
+
+    .back-button a:hover {
+      background-color: #007acc;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Notification Sound -->
+  <audio id="notifySound" src="https://cdn.pixabay.com/download/audio/2022/03/24/audio_6e418acc30.mp3?filename=me-saying-good-job-im-am-so-proud-of-you-100765.mp3" preload="auto"></audio>
+
+  <div class="container">
+    <div id="selfCareSection" class="self-care">
+      <h2>💙 Self-Care Goals</h2>
+
+      <!-- Daily Self-Care Tasks -->
+      <div class="daily-tasks">
+        <h3>📝 Daily Self-Care Tasks</h3>
+        <input type="text" id="taskInput" placeholder="Add new task" />
+        <button onclick="addTask()">Add</button>
+        <ul id="taskList"></ul>
+      </div>
+
+      <!-- Fitness Coach -->
+      <div class="fitness-coach">
+        <h3>💪 Fitness Coach</h3>
+        <button onclick="showFitnessTask()">Get Fitness Task</button>
+        <p id="fitnessTask"></p>
+        <button id="completeFitnessBtn" class="hidden" onclick="completeFitnessTask()">Mark as Done</button>
+      </div>
+
+      <!-- Exit Button at the Bottom -->
+      <div class="back-button">
+        <a href="index.html">← Back to Home</a>
+      </div>
+    
+
+    <!-- Notification -->
+    <div id="notification" class="notification hidden"></div>
+  </div>
+
+  <script>
+    const notifySound = document.getElementById('notifySound');
+
+    function showNotification(message) {
+      const notification = document.getElementById("notification");
+      notification.textContent = message;
+      notification.classList.remove("hidden");
+      notification.classList.add("show");
+      notifySound.play();
+
+      setTimeout(() => {
+        notification.classList.remove("show");
+        notification.classList.add("hidden");
+      }, 3000);
+    }
+
+    function addTask() {
+      const taskInput = document.getElementById("taskInput");
+      const taskText = taskInput.value.trim();
+      if (!taskText) return;
+
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <span>${taskText}</span>
+        <div class="task-buttons">
+          <button onclick="completeTask(this)">✔</button>
+          <button onclick="deleteTask(this)">🗑</button>
+        </div>
+      `;
+      document.getElementById("taskList").appendChild(li);
+      taskInput.value = "";
+    }
+
+    function completeTask(btn) {
+      const li = btn.closest("li");
+      li.classList.add("completed");
+      showNotification("✅ Task Completed! Good job I am so proud of you! Well done keep rocking 🤘🏼");
+    }
+
+    function deleteTask(btn) {
+      const li = btn.closest("li");
+      li.remove();
+    }
+
+    const fitnessTasks = [
+      "🏃 Run in place for 2 minutes",
+      "🧘 Do 5 minutes of meditation",
+      "💧 Drink a glass of water",
+      "🧎‍♀️ 15 squats",
+      "🪑 10 chair dips",
+      "🦵 20 leg raises",
+      "🧍‍♂️ Wall sit for 30 seconds",
+      "🪂 20 jumping jacks",
+      "🧘‍♂️ Try 3 yoga stretches",
+      "🚶‍♂️ Take a short walk",
+      "🦶 Ankle rolls for 1 minute",
+      "📿 Breathing exercise for 3 mins"
+    ];
+
+    function showFitnessTask() {
+      const task = fitnessTasks[Math.floor(Math.random() * fitnessTasks.length)];
+      document.getElementById("fitnessTask").textContent = task;
+      document.getElementById("completeFitnessBtn").classList.remove("hidden");
+    }
+
+    function completeFitnessTask() {
+      showNotification("🏆 Fitness task completed!✅ Good job I am so proud of you! Well done keep rocking 🤘🏼 ");
+      document.getElementById("fitnessTask").textContent = "";
+      document.getElementById("completeFitnessBtn").classList.add("hidden");
+    }
+
+    function exitSelfCare() {
+      showNotification("👋 Goodbye! Take care!");
+    }
+  </script>
+</body>
+</html>

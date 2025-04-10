@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sleep Tracker - MedTime+</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f0f8ff;
+      padding: 20px;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+      box-sizing: border-box;
+      margin-bottom: 80px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    input, button {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    canvas {
+      margin-top: 20px;
+    }
+
+    .reset-btn {
+      background-color: #ff6666;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .reset-btn:hover {
+      background-color: #cc0000;
+    }
+
+    .back-button {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    .back-button a {
+      color: #007acc;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      border: 2px solid #007acc;
+      border-radius: 10px;
+      transition: background 0.3s;
+    }
+
+    .back-button a:hover {
+      background-color: #007acc;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>😴 Sleep Tracker</h1>
+    <label>Sleep Time:</label>
+    <input type="time" id="sleepTime" />
+
+    <label>Wake Time:</label>
+    <input type="time" id="wakeTime" />
+
+    <button onclick="saveSleepData()">Save Today's Sleep</button>
+    <button class="reset-btn" onclick="resetSleepData()">Reset Sleep Data</button>
+
+    <div class="feedback" id="sleepFeedback"></div>
+
+    <canvas id="sleepChart" width="400" height="200"></canvas>
+  </div>
+
+  <div class="back-button">
+    <a href="index.html">← Back to Home</a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    let sleepData = JSON.parse(localStorage.getItem("sleepData")) || [];
+    let chart; // chart instance
+
+    function saveSleepData() {
+      const sleep = document.getElementById("sleepTime").value;
+      const wake = document.getElementById("wakeTime").value;
+
+      if (!sleep || !wake) {
+        alert("Please enter both sleep and wake times.");
+        return;
+      }
+
+      const sleepDate = new Date(`1970-01-01T${sleep}`);
+      let wakeDate = new Date(`1970-01-01T${wake}`);
+      if (wakeDate <= sleepDate) wakeDate.setDate(wakeDate.getDate() + 1);
+
+      const hoursSlept = (wakeDate - sleepDate) / (1000 * 60 * 60);
+      const today = new Date().toLocaleDateString();
+
+      sleepData.push({ date: today, hours: hoursSlept.toFixed(1) });
+
+      if (sleepData.length > 7) sleepData.shift(); // Keep last 7 entries
+      localStorage.setItem("sleepData", JSON.stringify(sleepData));
+
+      showFeedback(hoursSlept);
+      drawGraph();
+    }
+
+    function showFeedback(hours) {
+      const fb = document.getElementById("sleepFeedback");
+      if (hours < 6) {
+        fb.innerText = `⚠️ You only slept ${hours.toFixed(1)} hours. Try to improve your sleep!`;
+        fb.style.color = "red";
+      } else if (hours >= 6 && hours <= 8) {
+        fb.innerText = `✅ Good job! You slept ${hours.toFixed(1)} hours.`;
+        fb.style.color = "green";
+      } else {
+        fb.innerText = `🌟 Excellent! ${hours.toFixed(1)} hours of rest!`;
+        fb.style.color = "blue";
+      }
+    }
+
+    function drawGraph() {
+      const ctx = document.getElementById('sleepChart').getContext('2d');
+      const labels = sleepData.map(entry => entry.date);
+      const data = sleepData.map(entry => entry.hours);
+
+      if (chart) chart.destroy(); // Destroy previous chart
+
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Hours Slept',
+            data: data,
+            borderColor: 'blue',
+            fill: false,
+            tension: 0.3
+          }]
+        },
+        options: {
+          scales: {
+            y: { beginAtZero: true, max: 12 }
+          }
+        }
+      });
+    }
+
+    function resetSleepData() {
+      if (confirm("Are you sure you want to reset all sleep data?")) {
+        sleepData = [];
+        localStorage.removeItem("sleepData");
+        if (chart) chart.destroy();
+        document.getElementById("sleepFeedback").innerText = "";
+      }
+    }
+
+    if (sleepData.length > 0) drawGraph();
+  </script>
+</body>
+</html>

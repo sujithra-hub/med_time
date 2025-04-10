@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MedTime+ Body Scan Wellness</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #e3f2fd, #ffffff);
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .box {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      max-width: 600px;
+    }
+
+    h1 {
+      color: #1565c0;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      background: #42a5f5;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      margin-top: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .btn:hover {
+      background: #1e88e5;
+    }
+
+    .popup {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff9c4;
+      color: #555;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      z-index: 10;
+      display: none;
+      font-size: 16px;
+    }
+
+    .body-scan {
+      text-align: left;
+      font-size: 16px;
+      margin-top: 15px;
+    }
+
+    .highlight {
+      background: #e1f5fe;
+      padding: 6px 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+
+    .back-button a {
+      color: #007acc;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      border: 2px solid #007acc;
+      border-radius: 10px;
+      transition: background 0.3s;
+    }
+
+    .back-button a:hover {
+      background-color: #007acc;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Gratitude Popup -->
+  <div class="popup" id="gratitudePopup">
+    💛 What are you grateful for today? Pause, reflect, breathe.
+  </div>
+
+  <div class="box">
+    <h1>🧘 Body Scan Meditation</h1>
+    <button class="btn" id="playPauseBtn" onclick="toggleAudio()">🎧 Start Meditation</button>
+    <div class="body-scan" id="scanText"></div>
+  </div>
+
+  <!-- Meditation Voice (royalty-free audio) -->
+  <audio id="meditationVoice" src="https://s3.amazonaws.com/guided-meditations/Living-From-The-Heart-Preview.mp3"></audio>
+  
+  <div class="back-button">
+    <a href="index.html">← Back to Home</a>
+  </div>
+
+  <script>
+    // Gratitude popup
+    window.onload = function() {
+      const popup = document.getElementById('gratitudePopup');
+      popup.style.display = 'block';
+      setTimeout(() => popup.style.display = 'none', 6000);
+    };
+
+    // Body scan steps
+    const scanSteps = [
+      "Close your eyes. I love who I am.",
+      "I accept myself completely.",
+      "I am kind and loving.",
+      "I am a caring and understanding person.",
+      "I give and receive love laterally and easily.",
+      "I am connected to an infinite supply of divine love.",
+      "I feel my heart with this love.",
+      "I am worthy of this love.",
+      "The love I feel in my heart is pure and unconditional.",
+      "It is easy for me to be joyous and loving because every day my heart overflows with a bundle of pure love.",
+      "I allow myself to be guided by love.",
+      "I follow my heart, and through it, I know my passion.",
+      "Love, joy, and happiness radiate from my heart and out into the world.",
+      "I am open to the flow of divine love from my higher self.",
+      "Love impels me, Love connects me to the spirit.",
+      "Love connects me to all that is. Love is all that is.",
+      "I am kind, I am loving, I live from the heart."
+    ];
+
+    let isPlaying = false;
+    let i = 0;
+
+    function toggleAudio() {
+      const voice = document.getElementById("meditationVoice");
+      const scanText = document.getElementById('scanText');
+      const button = document.getElementById('playPauseBtn');
+
+      if (isPlaying) {
+        voice.pause();
+        button.innerHTML = '🎧 Start Meditation';
+        isPlaying = false;
+      } else {
+        voice.play();
+        button.innerHTML = '⏸️ Pause Meditation';
+        isPlaying = true;
+
+        // Clear previous text
+        scanText.innerHTML = '';
+        i = 0;
+
+        // Sync text with audio
+        const interval = setInterval(() => {
+          if (i < scanSteps.length && !voice.paused) {
+            scanText.innerHTML += `<p class="highlight">${scanSteps[i]}</p>`;
+            i++;
+          } else if (voice.paused || i >= scanSteps.length) {
+            clearInterval(interval);
+          }
+        }, 4000); // 4 seconds per line of text
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MedTime+ Medicine Reminder</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #d0eaff, #f0faff);
+      margin: 0;
+      padding: 2rem;
+      color: #003e7a;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 8px 20px rgba(0, 100, 255, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #007acc;
+      margin-bottom: 1.5rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input, select, button {
+      padding: 0.9rem;
+      border: 1px solid #007acc;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #007acc;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #005f99;
+    }
+
+    .medicine-entry {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #eaf6ff;
+      border-radius: 12px;
+    }
+
+    .entry-buttons {
+      margin-top: 1rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .entry-buttons button {
+      flex: 1;
+      min-width: 100px;
+    }
+
+    .back-button {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .back-button a {
+      color: #007acc;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      border: 2px solid #007acc;
+      border-radius: 10px;
+      transition: background 0.3s;
+    }
+
+    .back-button a:hover {
+      background-color: #007acc;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💊 MedTime+ Reminder</h1>
+
+    <form id="reminderForm">
+      <input type="text" id="medName" placeholder="Medicine Name" required />
+      <input type="time" id="medTime" required />
+      <select id="mealTime">
+        <option value="">-- Before or After Meal --</option>
+        <option value="Before Meal">Before Meal</option>
+        <option value="After Meal">After Meal</option>
+      </select>
+      <select id="timeOfDay">
+        <option value="">-- Time of Day --</option>
+        <option value="Morning">Morning</option>
+        <option value="Afternoon">Afternoon</option>
+        <option value="Night">Night</option>
+      </select>
+      <button type="submit">➕ Add Reminder</button>
+    </form>
+
+    <div class="medicine-entry" id="medicineCard" style="display:none;">
+      <strong>Medicine:</strong> <span id="showName"></span><br>
+      <strong>Time:</strong> <span id="showTime"></span><br>
+      <strong>Meal:</strong> <span id="showMeal"></span><br>
+      <strong>Part of Day:</strong> <span id="showDay"></span><br>
+
+      <div class="entry-buttons">
+        <button onclick="markTaken()">✔ Taken</button>
+        <button onclick="markMissed()">❌ Missed</button>
+        <button onclick="deleteReminder()">🗑 Delete</button>
+      </div>
+    </div>
+
+    <div class="back-button">
+      <a href="index.html">← Back to Home</a>
+    </div>
+  </div>
+
+  <!-- Sound effects -->
+  <audio id="reminderSound" src="https://cdn.pixabay.com/download/audio/2023/07/14/audio_d3795599e4.mp3?filename=notification-3-158189.mp3" preload="auto"></audio>
+  <audio id="encourageSound" src="https://www.soundjay.com/human/sounds/applause-01.mp3" preload="auto"></audio>
+  <audio id="strictSound" src="https://cdn.pixabay.com/download/audio/2025/01/11/audio_6ae872e23e.mp3?filename=best-notification-5-286670.mp3" preload="auto"></audio>
+  
+  <script>
+    let reminderTime = "";
+    let reminderSet = false;
+
+    document.getElementById("reminderForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("medName").value;
+      reminderTime = document.getElementById("medTime").value;
+      const meal = document.getElementById("mealTime").value;
+      const day = document.getElementById("timeOfDay").value;
+
+      document.getElementById("showName").textContent = name;
+      document.getElementById("showTime").textContent = reminderTime;
+      document.getElementById("showMeal").textContent = meal;
+      document.getElementById("showDay").textContent = day;
+
+      document.getElementById("medicineCard").style.display = "block";
+      reminderSet = true;
+
+      alert("✅ Reminder added successfully!");
+    });
+
+    function markTaken() {
+      document.getElementById("encourageSound").play();
+      setTimeout(() => {
+        alert("👏 Well done for taking your medicine!");
+      }, 100);
+    }
+
+    function markMissed() {
+      document.getElementById("strictSound").play();
+      setTimeout(() => {
+        alert("⚠️ Please don’t skip your medicine! This is bad for your health.");
+      }, 100);
+    }
+
+    function deleteReminder() {
+      document.getElementById("medicineCard").style.display = "none";
+      reminderSet = false;
+      alert("🗑 Reminder deleted.");
+    }
+
+    setInterval(() => {
+      if (reminderSet) {
+        const now = new Date();
+        const currentTime = now.toTimeString().slice(0, 5);
+        if (currentTime === reminderTime) {
+          document.getElementById("reminderSound").play();
+          setTimeout(() => {
+            alert("🔔 It's time to take your medicine!");
+          }, 100);
+          reminderSet = false;
+        }
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

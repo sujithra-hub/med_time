@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MedTime+</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <h1>MedTime+</h1>
+    <p class="subtitle">Your Health Companion</p>
+
+    <!-- Home Menu -->
+    <div id="home" class="menu-grid">
+      <a href="medicine-reminder.html">
+        <button style="padding: 1rem; background-color: #007acc; color: white; border-radius: 10px; border: none; cursor: pointer;">
+          💊 Medicine Reminder
+        </button>
+      </a>
+      <a href="Mood-Tracker.html">
+        <button style="padding: 1rem; background-color: #007acc; color: white; border-radius: 10px; border: none; cursor: pointer;">
+          😊 Mood Tracker
+        </button>
+      </a>
+      <a href="sos.html">
+        <button style="padding: 1rem; background-color: #007acc; color: white; border-radius: 10px; border: none; cursor: pointer;">
+          🚨 SOS Safety
+        </button>
+      
+      <a href="sleep-cycle.html">
+        <button style="padding: 1rem; background-color: #007acc; color: white; border-radius: 10px; border: none; cursor: pointer;">
+          🛌 Sleep Cycle
+        </button>
+      </a>
+      <a href="Medical-Bot.html">
+        <button style="padding: 1rem; background-color: #007acc; color: white; border-radius: 10px; border: none; cursor: pointer;">
+          🤖 Medical Bot
+        </button>
+      </a>
+      <a href="self-care.html">
+        <button style="padding: 1rem; background-color: #007acc; color: white; border-radius: 10px; border: none; cursor: pointer;">
+          🌿 Self-Care Goals
+        </button>
+      </a>
+      
+      <a href="wellness.html">
+        <button style="padding: 1rem; background-color: #007acc; color: white; border-radius: 10px; border: none; cursor: pointer;">
+          💡 Wellness
+        </button>
+      </a>
+
+    </div>
+
+
+    <!-- Module Sections -->
+    <div id="medicine" class="section hidden">
+      <h2>💊 Medicine Reminder</h2>
+      <p>Set and manage your medicine schedule here.</p>
+      <button class="exit-btn" onclick="goBack()">❌ Exit</button>
+    </div>
+
+    <div id="mood" class="section hidden">
+      <h2>😊 Mood Tracker</h2>
+      <p>Track how you’re feeling daily.</p>
+      <button class="exit-btn" onclick="goBack()">❌ Exit</button>
+    </div>
+
+    <div id="sos" class="section hidden">
+      <h2>🚨 SOS Safety</h2>
+      <p>Send emergency alerts and contacts.</p>
+      <button class="exit-btn" onclick="goBack()">❌ Exit</button>
+    </div>
+
+    <div id="sleep" class="section hidden">
+      <h2>🛌 Sleep Cycle</h2>
+      <p>Monitor and improve your sleep habits.</p>
+      <button class="exit-btn" onclick="goBack()">❌ Exit</button>
+    </div>
+
+    <div id="bot" class="section hidden">
+      <h2>🤖 Medical Bot</h2>
+      <p>Chat with our wellness bot.</p>
+      <button class="exit-btn" onclick="goBack()">❌ Exit</button>
+    </div>
+
+    <div id="report" class="section hidden">
+      <h2>📊 Health Report</h2>
+      <p>View your health progress and summaries.</p>
+      <button class="exit-btn" onclick="goBack()">❌ Exit</button>
+    </div>
+
+    <div id="selfcare" class="section hidden">
+      <h2>🌿 Self-Care Goals</h2>
+      <p>Set and track your personal goals.</p>
+      <button class="exit-btn" onclick="goBack()">❌ Exit</button>
+    </div>
+
+    <div id="wellness" class="section hidden">
+      <h2>💡 Wellness Tips</h2>
+      <p>Helpful tips for your mental and physical health.</p>
+      <button class="exit-btn" onclick="goBack()">❌ Exit</button>
+    </div>
+  </div>
+
+  <script>
+    function openSection(id) {
+      document.getElementById('home').style.display = 'none';
+      document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function goBack() {
+      document.getElementById('home').style.display = 'grid';
+      document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
+    }
+  </script>
+</body>
+</html>
